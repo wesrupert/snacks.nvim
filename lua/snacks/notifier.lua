@@ -31,6 +31,7 @@ local uv = vim.uv or vim.loop
 ---@field timeout? number|boolean timeout in ms. Set to 0|false to keep until manually closed
 ---@field ft? string
 ---@field keep? fun(notif: snacks.notifier.Notif): boolean
+---@field skip? fun(notif: snacks.notifier.Notif): boolean
 ---@field style? snacks.notifier.style
 ---@field opts? fun(notif: snacks.notifier.Notif) -- dynamic opts
 ---@field hl? snacks.notifier.hl -- highlight overrides
@@ -108,6 +109,7 @@ Snacks.config.style("notification_history", {
 ---@class snacks.notifier.Config
 ---@field enabled? boolean
 ---@field keep? fun(notif: snacks.notifier.Notif): boolean # global keep function
+---@field skip? fun(notif: snacks.notifier.Notif): boolean # global skip function
 local defaults = {
   timeout = 3000, -- default timeout in ms
   width = { min = 40, max = 0.4 },
@@ -392,6 +394,11 @@ function N:add(opts)
     notif.layout = n.layout
     notif.dirty = true
   end
+
+  if self.opts.skip and self.opts.skip(notif) then
+    return nil
+  end
+
   self.sorted = nil
   if numlevel(notif.level) >= numlevel(self.opts.level) then
     self.queue[notif.id] = notif

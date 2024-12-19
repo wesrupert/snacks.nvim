@@ -120,6 +120,7 @@ vim.api.nvim_create_autocmd("LspProgress", {
 ---@class snacks.notifier.Config
 ---@field enabled? boolean
 ---@field keep? fun(notif: snacks.notifier.Notif): boolean # global keep function
+---@field skip? fun(notif: snacks.notifier.Notif): boolean # global skip function
 {
   timeout = 3000, -- default timeout in ms
   width = { min = 40, max = 0.4 },
@@ -140,6 +141,9 @@ vim.api.nvim_create_autocmd("LspProgress", {
   },
   keep = function(notif)
     return vim.fn.getcmdpos() > 0
+  end,
+  skip = function(notif)
+    return false
   end,
   ---@type snacks.notifier.style
   style = "compact",
@@ -219,6 +223,7 @@ Notification options
 ---@field timeout? number|boolean timeout in ms. Set to 0|false to keep until manually closed
 ---@field ft? string
 ---@field keep? fun(notif: snacks.notifier.Notif): boolean
+---@field skip? fun(notif: snacks.notifier.Notif): boolean
 ---@field style? snacks.notifier.style
 ---@field opts? fun(notif: snacks.notifier.Notif) -- dynamic opts
 ---@field hl? snacks.notifier.hl -- highlight overrides
